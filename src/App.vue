@@ -1,21 +1,29 @@
 <template>
   <h1>VMail Inbox</h1>
+
+  <h1>{{ emailSelection.emails.size }} emails selected</h1>
+
   <suspense>
     <template #default>
       <MailTable />
     </template>
-    <template #fallback>
-      Loading...
-    </template>
+    <template #fallback> Loading... </template>
   </suspense>
 </template>
   
 <script>
-import MailTable from '@/components/MailTable.vue';
+import MailTable from "@/components/MailTable.vue";
+import useEmailSelection from "@/composables/use-email-selection";
+
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    MailTable
+    MailTable,
+  },
+  setup() {
+    return {
+      emailSelection: useEmailSelection()
+    }
   }
 };
 </script>
@@ -55,12 +63,12 @@ button.selected {
   cursor: pointer;
 }
 
-input[type='checkbox'] {
-  -webkit-appearance:none;
+input[type="checkbox"] {
+  -webkit-appearance: none;
   cursor: pointer;
-  width:24px;
-  height:24px;
-  background:white;
+  width: 24px;
+  height: 24px;
+  background: white;
   border-radius: 2px;
   border: 1px solid #555;
   position: relative;
@@ -68,11 +76,11 @@ input[type='checkbox'] {
   padding: 10px;
 }
 
-input[type='checkbox'].partial-check {
-  background: #ABC;
+input[type="checkbox"].partial-check {
+  background: #abc;
 }
 
-input[type='checkbox']:checked {
+input[type="checkbox"]:checked {
   background: #679;
 }
 
@@ -82,7 +90,8 @@ input[type='checkbox']:checked {
 
 /* Modal */
 
-.modal, .overlay {
+.modal,
+.overlay {
   width: 100%;
   height: 100%;
   position: fixed;
@@ -119,7 +128,7 @@ input[type='checkbox']:checked {
   border-collapse: collapse;
 }
 .mail-table tr.read {
-  background-color: #EEE;
+  background-color: #eee;
 }
 .mail-table tr {
   height: 40px;

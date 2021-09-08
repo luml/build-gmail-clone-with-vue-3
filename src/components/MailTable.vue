@@ -1,16 +1,21 @@
 <template>
+  <h1>{{ emailSelection.emails.size }} emails selected</h1>
   <table class="mail-table">
     <tbody>
       <tr
         v-for="email in unarchivedEmails"
         :key="email.id"
         :class="['clickbale', email.read ? 'read' : '']"
-        @click="openEmail(email)"
       >
         <td>
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            @click="emailSelection.toggle(email)"
+            :selected="emailSelection.emails.has(email)"
+          />
         </td>
         <td>{{ email.from }}</td>
+        <td @click="openEmail(email)"></td>
         <td>
           <p>
             <strong>{{ email.subject }}</strong> - {{ email.body }}
@@ -34,10 +39,14 @@ import axios from "axios";
 import { ref } from "vue";
 import MailView from "@/components/MailView.vue";
 import ModelView from "@/components/ModelView.vue";
+import useEmailSelection from "@/composables/use-email-selection";
+
 export default {
   async setup() {
     let { data: emails } = await axios.get("http://localhost:3000/emails");
+
     return {
+      emailSelection: useEmailSelection(),
       format,
       emails: ref(emails),
       openedEmail: ref(null),
