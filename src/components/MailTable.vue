@@ -1,10 +1,18 @@
 <template>
-  <h1>{{ emailSelection.emails.size }} emails selected</h1>
-  <BulkActionBar :emails="unarchivedEmails"/>
+  <button @click="selectScreen('inbox')" :disabled="selectedScreen == 'inbox'">
+    Inbox
+  </button>
+  <button
+    @click="selectScreen('archive')"
+    :disabled="selectedScreen == 'archive'"
+  >
+    Archived
+  </button>
+  <BulkActionBar :emails="filteredEmails" />
   <table class="mail-table">
     <tbody>
       <tr
-        v-for="email in unarchivedEmails"
+        v-for="email in filteredEmails"
         :key="email.id"
         :class="['clickbale', email.read ? 'read' : '']"
       >
@@ -41,7 +49,7 @@ import { ref } from "vue";
 import MailView from "@/components/MailView.vue";
 import ModelView from "@/components/ModelView.vue";
 import useEmailSelection from "@/composables/use-email-selection";
-import BulkActionBar from '@/components/BulkActionBar.vue';
+import BulkActionBar from "@/components/BulkActionBar.vue";
 
 export default {
   async setup() {
@@ -52,12 +60,13 @@ export default {
       format,
       emails: ref(emails),
       openedEmail: ref(null),
+      selectedScreen: ref("inbox"),
     };
   },
   components: {
     MailView,
     ModelView,
-    BulkActionBar
+    BulkActionBar,
   },
   computed: {
     sortedEmails() {
@@ -65,11 +74,19 @@ export default {
         return e1.sentAt < e2.sentAt ? 1 : -1;
       });
     },
-    unarchivedEmails() {
-      return this.sortedEmails.filter((e) => !e.archived);
+    filteredEmails() {
+      if (this.selectedScreen === "inbox") {
+        return this.sortedEmails.filter((e) => !e.archived);
+      } else {
+        return this.sortedEmails.filter((e) => e.archived);
+      }
     },
   },
   methods: {
+    selectScreen(newScreen) {
+      this.selectedScreen = newScreen;
+      this.emailSelection.clear();
+    },
     openEmail(email) {
       this.openedEmail = email;
       if (email) {
